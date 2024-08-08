@@ -6,6 +6,9 @@
 #include "Camera/CameraComponent.h"
 #include "JadeHealthComponent.h"
 #include "JadeInventoryComponent.h"
+#include "Jade/Weapon/JadeWeapon.h"
+#include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -21,7 +24,6 @@ AJadeCharacter::AJadeCharacter()
 
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
-	FirstPersonCameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f));
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
 
 	FirstPersonMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterFirstPersonMesh"));
@@ -29,23 +31,20 @@ AJadeCharacter::AJadeCharacter()
 	FirstPersonMesh->SetupAttachment(FirstPersonCameraComponent);
 	FirstPersonMesh->bCastDynamicShadow = false;
 	FirstPersonMesh->CastShadow = false;
-	FirstPersonMesh->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
-	FirstPersonMesh->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
 	ThirdPersonGun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ThirdPersonGun"));
 	ThirdPersonGun->SetOnlyOwnerSee(false);
 	ThirdPersonGun->bCastDynamicShadow = false;
 	ThirdPersonGun->CastShadow = false;
 
-	CharacterHealth = CreateDefaultSubobject<UJadeHealthComponent>(TEXT("CharacterHealth"));
-	CharacterInventory = CreateDefaultSubobject<UJadeInventoryComponent>(TEXT("CharacterInventory"));
+	CharacterHealth = CreateDefaultSubobject<UJadeHealthComponent>(TEXT("CharacterHealthComponent"));
+	CharacterInventory = CreateDefaultSubobject<UJadeInventoryComponent>(TEXT("CharacterInventoryComponent"));
 }
 
 // Called when the game starts or when spawned
 void AJadeCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AJadeCharacter::MoveForward(float Value)
@@ -104,4 +103,3 @@ void AJadeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AJadeCharacter::LookUpAtRate);
 }
-

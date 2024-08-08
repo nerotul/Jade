@@ -11,6 +11,7 @@ class USkeletalMeshComponent;
 class UCameraComponent;
 class UJadeHealthComponent;
 class UJadeInventoryComponent;
+class AJadeWeapon;
 
 UCLASS()
 class JADE_API AJadeCharacter : public ACharacter
@@ -26,6 +27,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UJadeInventoryComponent* CharacterInventory;
+
+	UCameraComponent* GetFirstPersonCameraComponent() { return FirstPersonCameraComponent; };
 
 protected:
 	// Called when the game starts or when spawned
@@ -62,9 +65,5 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UPROPERTY(BlueprintReadOnly)
-	FRotator CharacterCameraRotation;
-
 
 };
