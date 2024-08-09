@@ -75,6 +75,17 @@ void AJadeCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+
+	ServerSyncCameraPitch(FirstPersonCameraComponent->GetComponentRotation().Pitch);
+
+}
+
+void AJadeCharacter::ServerSyncCameraPitch_Implementation(float InPitch)
+{
+	FRotator NewRotation = FirstPersonCameraComponent->GetComponentRotation();
+	NewRotation.Pitch = InPitch;
+	CharacterCameraRotation = NewRotation;
+	FirstPersonCameraComponent->SetWorldRotation(NewRotation);
 }
 
 // Called every frame
@@ -98,8 +109,13 @@ void AJadeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &AJadeCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &AJadeCharacter::LookUpAtRate);
+	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &AJadeCharacter::TurnAtRate);
+	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &AJadeCharacter::LookUpAtRate);
+}
+
+void AJadeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AJadeCharacter, CharacterCameraRotation);
 }
