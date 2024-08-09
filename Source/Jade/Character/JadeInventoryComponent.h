@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Jade/Weapon/JadeWeapon.h"
 #include "JadeInventoryComponent.generated.h"
 
 
@@ -15,6 +16,9 @@ class JADE_API UJadeInventoryComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UJadeInventoryComponent();
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Replicated)
+	TArray<TSubclassOf<AJadeWeapon>> InventoryWeapons;
 
 protected:
 	// Called when the game starts

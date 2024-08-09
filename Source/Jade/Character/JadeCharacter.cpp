@@ -115,8 +115,9 @@ void AJadeCharacter::ServerSyncCameraPitch_Implementation(float InPitch)
 
 void AJadeCharacter::SpawnFirstPersonWeapon()
 {
-	if (WeaponClass)
+	if (CharacterInventory->InventoryWeapons.IsValidIndex(CurrentWeaponInventoryIndex))
 	{
+		TSubclassOf<AJadeWeapon> WeaponClass = CharacterInventory->InventoryWeapons[CurrentWeaponInventoryIndex];
 		FActorSpawnParameters ActorSpawnParams;
 		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 		ActorSpawnParams.Owner = this;
@@ -162,6 +163,45 @@ void AJadeCharacter::TryToFireWeapon()
 	}
 }
 
+void AJadeCharacter::ServerSwitchToNextWeapon_Implementation()
+{
+	if (CharacterInventory && !CurrentWeapon->GetIsReloading())
+	{
+		if (CharacterInventory->InventoryWeapons.IsValidIndex(CurrentWeaponInventoryIndex + 1))
+		{
+			CurrentWeapon->Destroy();
+			CurrentWeaponInventoryIndex += 1;
+			SpawnFirstPersonWeapon();
+
+		}
+		else
+		{
+			CurrentWeapon->Destroy();
+			CurrentWeaponInventoryIndex = 0;
+			SpawnFirstPersonWeapon();
+
+		}
+	}
+}
+
+void AJadeCharacter::ServerSwitchToPreviousWeapon_Implementation()
+{
+	if (CharacterInventory->InventoryWeapons.IsValidIndex(CurrentWeaponInventoryIndex - 1))
+	{
+		CurrentWeapon->Destroy();
+		CurrentWeaponInventoryIndex -= 1;
+		SpawnFirstPersonWeapon();
+
+	}
+	else
+	{
+		CurrentWeapon->Destroy();
+		CurrentWeaponInventoryIndex = (CharacterInventory->InventoryWeapons.Num() - 1);
+		SpawnFirstPersonWeapon();
+
+	}
+}
+
 // Called every frame
 void AJadeCharacter::Tick(float DeltaTime)
 {
@@ -190,6 +230,10 @@ void AJadeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AJadeCharacter::ServerFireInputPressed);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AJadeCharacter::ServerFireInputReleased);
+
+	PlayerInputComponent->BindAction("SwitchToNextWeapon", IE_Pressed, this, &AJadeCharacter::ServerSwitchToNextWeapon);
+	PlayerInputComponent->BindAction("SwitchToPreviousWeapon", IE_Pressed, this, &AJadeCharacter::ServerSwitchToPreviousWeapon);
+
 }
 
 void AJadeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

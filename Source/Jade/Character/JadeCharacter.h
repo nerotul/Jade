@@ -36,6 +36,8 @@ public:
 
 	void PlayThirdPersonFireAnimation();
 
+	USkeletalMeshComponent* GetThirdPersonGun() { return ThirdPersonGun; };
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -72,9 +74,6 @@ protected:
 	FRotator CharacterCameraRotation;
 
 	// Weapon and damage
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AJadeWeapon> WeaponClass;
-
 	UFUNCTION()
 	void SpawnFirstPersonWeapon(); // Called only on server
 
@@ -100,6 +99,14 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Animation)
 	UAnimMontage* ThirdPersonFireAnimation;
+
+	int32 CurrentWeaponInventoryIndex = 0;
+
+	UFUNCTION(Server, Reliable)
+	void ServerSwitchToNextWeapon();
+
+	UFUNCTION(Server, Reliable)
+	void ServerSwitchToPreviousWeapon();
 
 public:	
 	// Called every frame

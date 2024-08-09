@@ -10,6 +10,13 @@ class AJadeCharacter;
 class USoundBase;
 class UParticleSystem;
 
+UENUM(BlueprintType)
+enum class WeaponType : uint8
+{
+	AR UMETA(DisplayName = "AR"),
+	Sniper   UMETA(DisplayName = "Sniper"),
+};
+
 UCLASS()
 class JADE_API AJadeWeapon : public AActor
 {
@@ -20,6 +27,8 @@ public:
 	AJadeWeapon();
 
 	USkeletalMesh* GetWeaponMesh() { return WeaponMesh->GetSkeletalMeshAsset(); };
+
+	bool GetIsReloading() const { return bIsReloading; };
 
 protected:
 	// Called when the game starts or when spawned

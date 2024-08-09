@@ -2,6 +2,7 @@
 
 
 #include "Jade/Character/JadeInventoryComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
 UJadeInventoryComponent::UJadeInventoryComponent()
@@ -10,7 +11,7 @@ UJadeInventoryComponent::UJadeInventoryComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	SetIsReplicatedByDefault(true);
 }
 
 
@@ -32,3 +33,11 @@ void UJadeInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	// ...
 }
 
+void UJadeInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UJadeInventoryComponent, InventoryWeapons);
+
+
+}

@@ -77,9 +77,9 @@ void AJadeWeapon::MulticastOnFireFX_Implementation()
 
 	if (MuzzleFire)
 	{
-		const USkeletalMeshSocket* Socket = WeaponMesh->GetSocketByName("MuzzleFlash");
-		FTransform Transform = Socket->GetSocketTransform(WeaponMesh);
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFire, Transform);
+			const USkeletalMeshSocket* Socket = WeaponMesh->GetSocketByName("MuzzleFlash");
+			FTransform Transform = Socket->GetSocketTransform(WeaponMesh);
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFire, Transform);
 
 	}
 
