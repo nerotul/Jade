@@ -41,6 +41,26 @@ AJadeCharacter::AJadeCharacter()
 	CharacterInventory = CreateDefaultSubobject<UJadeInventoryComponent>(TEXT("CharacterInventoryComponent"));
 }
 
+void AJadeCharacter::PlayFirstPersonFireAnimation()
+{
+	UAnimInstance* AnimInstance = FirstPersonMesh->GetAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(FirstPersonFireAnimation, 1.f);
+	}
+
+}
+
+void AJadeCharacter::PlayThirdPersonFireAnimation()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(ThirdPersonFireAnimation, 1.f);
+	}
+
+}
+
 // Called when the game starts or when spawned
 void AJadeCharacter::BeginPlay()
 {
@@ -124,10 +144,33 @@ void AJadeCharacter::OnRep_SetThirdPersonWeaponMesh()
 	}
 }
 
+void AJadeCharacter::ServerFireInputPressed_Implementation()
+{
+	bIsFireInputPressed = true;
+}
+
+void AJadeCharacter::ServerFireInputReleased_Implementation()
+{
+	bIsFireInputPressed = false;
+}
+
+void AJadeCharacter::TryToFireWeapon()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->Fire();
+	}
+}
+
 // Called every frame
 void AJadeCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bIsFireInputPressed)
+	{
+		TryToFireWeapon();
+	}
 
 }
 
@@ -142,11 +185,11 @@ void AJadeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &AJadeCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("Move Right / Left", this, &AJadeCharacter::MoveRight);
 
-	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &AJadeCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &AJadeCharacter::LookUpAtRate);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AJadeCharacter::ServerFireInputPressed);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AJadeCharacter::ServerFireInputReleased);
 }
 
 void AJadeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

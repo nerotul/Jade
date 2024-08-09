@@ -22,6 +22,7 @@ public:
 	// Sets default values for this character's properties
 	AJadeCharacter();
 
+	// Meshes and components
 	UPROPERTY(BlueprintReadOnly)
 	UJadeHealthComponent* CharacterHealth;
 
@@ -30,6 +31,10 @@ public:
 
 	UCameraComponent* GetFirstPersonCameraComponent() { return FirstPersonCameraComponent; };
 
+	// Weapon and damage
+	void PlayFirstPersonFireAnimation();
+
+	void PlayThirdPersonFireAnimation();
 
 protected:
 	// Called when the game starts or when spawned
@@ -37,7 +42,7 @@ protected:
 
 	//Meshes and components
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Mesh)
-	USkeletalMeshComponent* FirstPersonMesh;
+	USkeletalMeshComponent* FirstPersonMesh; // Using default mesh as third person
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* ThirdPersonGun;
@@ -66,12 +71,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	FRotator CharacterCameraRotation;
 
-	// Weapon
+	// Weapon and damage
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AJadeWeapon> WeaponClass;
 
 	UFUNCTION()
-	void SpawnFirstPersonWeapon();
+	void SpawnFirstPersonWeapon(); // Called only on server
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SetThirdPersonWeaponMesh)
 	AJadeWeapon* CurrentWeapon = nullptr;
@@ -79,7 +84,22 @@ protected:
 	UFUNCTION()
 	void OnRep_SetThirdPersonWeaponMesh();
 
+	bool bIsFireInputPressed = false;
 
+	UFUNCTION(Server, Unreliable)
+	void ServerFireInputPressed();
+
+	UFUNCTION(Server, Unreliable)
+	void ServerFireInputReleased();
+
+	UFUNCTION()
+	void TryToFireWeapon(); // Called only on server
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Animation)
+	UAnimMontage* FirstPersonFireAnimation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Animation)
+	UAnimMontage* ThirdPersonFireAnimation;
 
 public:	
 	// Called every frame
