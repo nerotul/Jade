@@ -15,9 +15,14 @@ public:
 	// Sets default values for this actor's properties
 	AJadeWeapon();
 
+	USkeletalMesh* GetWeaponMesh() { return WeaponMesh->GetSkeletalMeshAsset(); };
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, Category = Mesh)
+	USkeletalMeshComponent* WeaponMesh = nullptr;
 
 public:	
 	// Called every frame

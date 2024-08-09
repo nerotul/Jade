@@ -45,6 +45,11 @@ AJadeCharacter::AJadeCharacter()
 void AJadeCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (HasAuthority())
+	{
+		SpawnFirstPersonWeapon();
+	}
 }
 
 void AJadeCharacter::MoveForward(float Value)
@@ -88,6 +93,37 @@ void AJadeCharacter::ServerSyncCameraPitch_Implementation(float InPitch)
 	FirstPersonCameraComponent->SetWorldRotation(NewRotation);
 }
 
+void AJadeCharacter::SpawnFirstPersonWeapon()
+{
+	if (WeaponClass)
+	{
+		FActorSpawnParameters ActorSpawnParams;
+		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+		ActorSpawnParams.Owner = this;
+
+		FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, false);
+
+		CurrentWeapon = GetWorld()->SpawnActor<AJadeWeapon>(WeaponClass, ActorSpawnParams);
+
+		if (CurrentWeapon)
+		{
+			CurrentWeapon->AttachToComponent(FirstPersonMesh, Rule, FName("WeaponSocket"));
+			OnRep_SetThirdPersonWeaponMesh();
+
+		}
+	}
+}
+
+void AJadeCharacter::OnRep_SetThirdPersonWeaponMesh()
+{
+	if (CurrentWeapon)
+	{
+		ThirdPersonGun->SetSkeletalMesh(CurrentWeapon->GetWeaponMesh());
+		FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, false);
+		ThirdPersonGun->AttachToComponent(GetMesh(), Rule, FName("WeaponSocket"));
+	}
+}
+
 // Called every frame
 void AJadeCharacter::Tick(float DeltaTime)
 {
@@ -118,4 +154,6 @@ void AJadeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AJadeCharacter, CharacterCameraRotation);
+	DOREPLIFETIME(AJadeCharacter, CurrentWeapon);
+
 }

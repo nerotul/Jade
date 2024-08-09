@@ -66,6 +66,19 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	FRotator CharacterCameraRotation;
 
+	// Weapon
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AJadeWeapon> WeaponClass;
+
+	UFUNCTION()
+	void SpawnFirstPersonWeapon();
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SetThirdPersonWeaponMesh)
+	AJadeWeapon* CurrentWeapon = nullptr;
+
+	UFUNCTION()
+	void OnRep_SetThirdPersonWeaponMesh();
+
 
 
 public:	
@@ -74,6 +87,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 
 
 };
