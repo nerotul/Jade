@@ -7,6 +7,7 @@
 #include "Jade/Weapon/JadeWeapon.h"
 #include "JadeInventoryComponent.generated.h"
 
+class AJadeCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class JADE_API UJadeInventoryComponent : public UActorComponent
@@ -20,9 +21,28 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Replicated)
 	TArray<TSubclassOf<AJadeWeapon>> InventoryWeapons;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnInventoryRifleAmmoChanged();
+
+	UFUNCTION()
+	int GetInventoryAmmo(WeaponType InWeaponType);
+
+	UFUNCTION()
+	void ChangeInventoryAmmo(WeaponType InWeaponType, int InAmmoChange);
+
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_OnInventoryRifleAmmoChanged)
+	int InventoryRifleAmmo = 30;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int MaxInventoryRifleAmmo = 90;
+
+	UFUNCTION()
+	void OnRep_OnInventoryRifleAmmoChanged();
+
 
 public:	
 	// Called every frame

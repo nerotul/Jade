@@ -30,6 +30,12 @@ public:
 
 	bool GetIsReloading() const { return bIsReloading; };
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnMagazineAmmoChanged();
+
+	UFUNCTION(Server, Reliable)
+	void ServerTryReloadWeapon();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -37,7 +43,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* WeaponMesh = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = WeaponType)
+	WeaponType WeaponType = WeaponType::AR;
+
 	AJadeCharacter* ThisWeaponsOwner = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int MaxMagazineAmmo = 30;
+
+	UPROPERTY(ReplicatedUsing = OnRep_MagazineAmmoChanged, EditDefaultsOnly, BlueprintReadOnly)
+	int CurrentMagazineAmmo = MaxMagazineAmmo;
 
 	UPROPERTY(EditDefaultsOnly)
 	float WeaponDamage = 20.f;
@@ -61,6 +76,9 @@ protected:
 
 	void FireWithProjectile();
 
+	UFUNCTION()
+	void OnRep_MagazineAmmoChanged();
+
 	// FX
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastOnFireFX();
@@ -71,11 +89,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = FX)
 	UParticleSystem* MuzzleFire = nullptr;
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastReloadFX();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = FX)
+	USoundBase* ReloadSound = nullptr;
+
+	FTimerHandle ReloadTimerHandle;
+
+	UFUNCTION(Server, Reliable)
+	void ServerEndReloading();
+
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void Fire();
+	void Fire(); // Executes on server
 
 };

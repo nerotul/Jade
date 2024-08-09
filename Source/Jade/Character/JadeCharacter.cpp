@@ -61,6 +61,28 @@ void AJadeCharacter::PlayThirdPersonFireAnimation()
 
 }
 
+void AJadeCharacter::PlayFirstPersonReloadAnimation()
+{
+	UAnimInstance* AnimInstance = FirstPersonMesh->GetAnimInstance();
+
+	if (AnimInstance != nullptr)
+	{
+		AnimInstance->Montage_Play(FirstPersonReloadAnimation, 1.5f);
+	}
+
+}
+
+void AJadeCharacter::PlayThirdPersonReloadAnimation()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (AnimInstance != nullptr)
+	{
+		AnimInstance->Montage_Play(ThirdPersonReloadAnimation, 1.5f);
+	}
+
+}
+
 // Called when the game starts or when spawned
 void AJadeCharacter::BeginPlay()
 {
@@ -202,6 +224,11 @@ void AJadeCharacter::ServerSwitchToPreviousWeapon_Implementation()
 	}
 }
 
+void AJadeCharacter::ServerReloadWeapon_Implementation()
+{
+	CurrentWeapon->ServerTryReloadWeapon();
+}
+
 // Called every frame
 void AJadeCharacter::Tick(float DeltaTime)
 {
@@ -233,6 +260,8 @@ void AJadeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction("SwitchToNextWeapon", IE_Pressed, this, &AJadeCharacter::ServerSwitchToNextWeapon);
 	PlayerInputComponent->BindAction("SwitchToPreviousWeapon", IE_Pressed, this, &AJadeCharacter::ServerSwitchToPreviousWeapon);
+
+	PlayerInputComponent->BindAction("ReloadWeapon", IE_Pressed, this, &AJadeCharacter::ServerReloadWeapon);
 
 }
 

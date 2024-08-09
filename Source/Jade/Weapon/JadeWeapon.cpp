@@ -6,6 +6,9 @@
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "Net/UnrealNetwork.h"
+#include "Jade/Character/JadeInventoryComponent.h"
+
 
 // Sets default values
 AJadeWeapon::AJadeWeapon()
@@ -62,6 +65,42 @@ void AJadeWeapon::FireWithProjectile()
 {
 }
 
+void AJadeWeapon::OnRep_MagazineAmmoChanged()
+{
+	OnMagazineAmmoChanged();
+}
+
+void AJadeWeapon::ServerTryReloadWeapon_Implementation()
+{
+	if (!bIsReloading && CurrentMagazineAmmo != MaxMagazineAmmo)
+	{
+		int MagazineEmptySpace = MaxMagazineAmmo - CurrentMagazineAmmo;
+		int InventoryAmmo = ThisWeaponsOwner->CharacterInventory->GetInventoryAmmo(WeaponType);
+
+		if (MagazineEmptySpace > 0 && InventoryAmmo != 0)
+		{
+			bIsReloading = true;
+
+			if (InventoryAmmo > MagazineEmptySpace)
+			{
+				CurrentMagazineAmmo += MagazineEmptySpace;
+				ThisWeaponsOwner->CharacterInventory->ChangeInventoryAmmo(WeaponType, -MagazineEmptySpace);
+
+			}
+			else
+			{
+				CurrentMagazineAmmo += InventoryAmmo;
+				ThisWeaponsOwner->CharacterInventory->ChangeInventoryAmmo(WeaponType, -InventoryAmmo);
+
+			}
+
+		}
+
+		MulticastReloadFX();
+
+	}
+}
+
 void AJadeWeapon::MulticastOnFireFX_Implementation()
 {
 	if (FireSound)
@@ -77,12 +116,34 @@ void AJadeWeapon::MulticastOnFireFX_Implementation()
 
 	if (MuzzleFire)
 	{
-			const USkeletalMeshSocket* Socket = WeaponMesh->GetSocketByName("MuzzleFlash");
-			FTransform Transform = Socket->GetSocketTransform(WeaponMesh);
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFire, Transform);
+		const USkeletalMeshSocket* Socket = WeaponMesh->GetSocketByName("MuzzleFlash");
+		FTransform Transform = Socket->GetSocketTransform(WeaponMesh);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFire, Transform);
 
 	}
 
+}
+
+void AJadeWeapon::MulticastReloadFX_Implementation()
+{
+	if (ReloadSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ReloadSound, GetActorLocation());
+	}
+
+	if (ThisWeaponsOwner)
+	{
+		ThisWeaponsOwner->PlayFirstPersonReloadAnimation();
+		ThisWeaponsOwner->PlayThirdPersonReloadAnimation();
+		float AnimLength = ThisWeaponsOwner->GetThirdPersonReloadAnimLength();
+		GetWorldTimerManager().SetTimer(ReloadTimerHandle, this, &AJadeWeapon::ServerEndReloading, AnimLength, false);
+	}
+
+}
+
+void AJadeWeapon::ServerEndReloading_Implementation()
+{
+	bIsReloading = false;
 }
 
 // Called every frame
@@ -94,7 +155,7 @@ void AJadeWeapon::Tick(float DeltaTime)
 
 void AJadeWeapon::Fire()
 {
-	if (!bIsReloading && !bIsFireRestrictedByRate)
+	if (CurrentMagazineAmmo > 0 && !bIsReloading && !bIsFireRestrictedByRate)
 	{
 		SetFireRestrictedByRate();
 
@@ -109,5 +170,18 @@ void AJadeWeapon::Fire()
 
 		MulticastOnFireFX();
 
+		CurrentMagazineAmmo -= 1;
 	}
+	else if (CurrentMagazineAmmo == 0 && !bIsReloading)
+	{
+		ServerTryReloadWeapon();
+	}
+}
+
+void AJadeWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AJadeWeapon, CurrentMagazineAmmo);
+
 }

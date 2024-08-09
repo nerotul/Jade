@@ -38,6 +38,14 @@ public:
 
 	USkeletalMeshComponent* GetThirdPersonGun() { return ThirdPersonGun; };
 
+	void PlayFirstPersonReloadAnimation();
+
+	void PlayThirdPersonReloadAnimation();
+
+	float GetThirdPersonReloadAnimLength() { return ThirdPersonReloadAnimation->GetPlayLength(); };
+
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -107,6 +115,16 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void ServerSwitchToPreviousWeapon();
+
+	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	UAnimMontage* FirstPersonReloadAnimation;
+
+	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	UAnimMontage* ThirdPersonReloadAnimation;
+
+	UFUNCTION(Server, Reliable)
+	void ServerReloadWeapon();
+
 
 public:	
 	// Called every frame

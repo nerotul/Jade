@@ -15,6 +15,36 @@ UJadeInventoryComponent::UJadeInventoryComponent()
 }
 
 
+void UJadeInventoryComponent::OnRep_OnInventoryRifleAmmoChanged()
+{
+	OnInventoryRifleAmmoChanged();
+}
+
+int UJadeInventoryComponent::GetInventoryAmmo(WeaponType InWeaponType)
+{
+	switch (InWeaponType)
+	{
+	case WeaponType::AR:
+		return InventoryRifleAmmo;
+		break;
+	default:
+		return 0;
+		break;
+	}
+}
+
+void UJadeInventoryComponent::ChangeInventoryAmmo(WeaponType InWeaponType, int InAmmoChange)
+{
+	switch (InWeaponType)
+	{
+	case WeaponType::AR:
+		InventoryRifleAmmo += InAmmoChange;
+		break;
+	default:
+		break;
+	}
+}
+
 // Called when the game starts
 void UJadeInventoryComponent::BeginPlay()
 {
@@ -38,6 +68,7 @@ void UJadeInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UJadeInventoryComponent, InventoryWeapons);
+	DOREPLIFETIME(UJadeInventoryComponent, InventoryRifleAmmo);
 
 
 }
