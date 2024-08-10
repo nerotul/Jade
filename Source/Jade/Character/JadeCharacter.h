@@ -46,6 +46,27 @@ public:
 
 	float GetThirdPersonReloadAnimLength() { return ThirdPersonReloadAnimation->GetPlayLength(); };
 
+	UPROPERTY(BlueprintReadOnly)
+	AController* LastDamageInstigator;
+
+	// Widget updates
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnArmorChanged(float NewArmor);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHealthChanged(float NewHealth);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnMagazineAmmoChanged(float NewMagazineAmmo);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnWeaponChanged();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnInventoryRifleAmmoChanged(float NewAmount);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnInventorySniperAmmoChanged(float NewAmount);
 
 
 protected:
@@ -107,6 +128,8 @@ protected:
 	UFUNCTION()
 	void TryToFireWeapon(); // Called only on server
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Animation)
 	UAnimMontage* FirstPersonFireAnimation;
 
@@ -135,6 +158,8 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDropWeapon(AJadeWeapon* WeaponDropped);
+
+	bool bIsAlive = true;
 
 
 public:	

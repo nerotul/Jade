@@ -31,14 +31,14 @@ public:
 
 	bool GetIsReloading() const { return bIsReloading; };
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnMagazineAmmoChanged();
-
 	UFUNCTION(Server, Reliable)
 	void ServerTryReloadWeapon();
 
 	UFUNCTION(BlueprintCallable)
 	int GetCurrentMagazineAmmo() const { return CurrentMagazineAmmo; };
+
+	UFUNCTION(BlueprintCallable)
+	int GetMaxMagazineAmmo() const { return MaxMagazineAmmo; };
 
 	EWeaponType GetWeaponType() const { return WeaponType; };
 

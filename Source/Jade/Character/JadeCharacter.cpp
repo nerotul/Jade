@@ -176,6 +176,7 @@ void AJadeCharacter::OnRep_SetThirdPersonWeaponMesh()
 		ThirdPersonGun->SetSkeletalMesh(CurrentWeapon->GetWeaponMesh());
 		FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, false);
 		ThirdPersonGun->AttachToComponent(GetMesh(), Rule, FName("WeaponSocket"));
+		OnWeaponChanged();
 	}
 }
 
@@ -194,6 +195,21 @@ void AJadeCharacter::TryToFireWeapon()
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->Fire();
+	}
+}
+
+float AJadeCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (bIsAlive)
+	{
+		float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+		LastDamageInstigator = EventInstigator;
+		CharacterHealth->ChangeHealthValue(-DamageAmount);
+		return ActualDamage;
+	}
+	else
+	{
+		return 0;
 	}
 }
 
@@ -251,7 +267,7 @@ void AJadeCharacter::ServerReloadWeapon_Implementation()
 
 void AJadeCharacter::ServerTryDropWeapon_Implementation()
 {
-	if (CharacterInventory->InventoryWeapons.Num() >= 2)
+	if (!CurrentWeapon->GetIsReloading() && CharacterInventory->InventoryWeapons.Num() >= 2)
 	{
 		OnDropWeapon(CurrentWeapon); // Will spawn new weapon in blueprint
 		CharacterInventory->InventoryWeapons.Remove(CurrentWeapon->GetClass());

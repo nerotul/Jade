@@ -21,12 +21,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Replicated)
 	TArray<TSubclassOf<AJadeWeapon>> InventoryWeapons;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnInventoryRifleAmmoChanged();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnInventorySniperAmmoChanged();
-
 	UFUNCTION()
 	int GetInventoryAmmo(EWeaponType InWeaponType) const;
 
@@ -42,12 +36,14 @@ public:
 	void UpdateStashedAmmo(EWeaponType InWeaponType, int InNewStashedAmmo);
 
 	UFUNCTION()
-	int GetStashedAmmo(EWeaponType InWeaponType);
+	int GetStashedAmmo(EWeaponType InWeaponType) const;
 
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	AJadeCharacter* ComponentOwner = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_OnInventoryRifleAmmoChanged)
 	int InventoryRifleAmmo = 30;

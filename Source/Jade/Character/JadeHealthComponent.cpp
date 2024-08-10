@@ -3,6 +3,7 @@
 
 #include "Jade/Character/JadeHealthComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Jade/Character/JadeCharacter.h"
 
 // Sets default values for this component's properties
 UJadeHealthComponent::UJadeHealthComponent()
@@ -19,8 +20,27 @@ UJadeHealthComponent::UJadeHealthComponent()
 void UJadeHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ComponentOwner = Cast<AJadeCharacter>(GetOwner());
+
 }
 
+
+void UJadeHealthComponent::OnRep_ArmorChanged()
+{
+	if (ComponentOwner)
+	{
+		ComponentOwner->OnArmorChanged(CurrentArmor);
+	}
+}
+
+void UJadeHealthComponent::OnRep_HealthChanged()
+{
+	if (ComponentOwner)
+	{
+		ComponentOwner->OnHealthChanged(CurrentHealth);
+	}
+}
 
 // Called every frame
 void UJadeHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -51,6 +71,8 @@ void UJadeHealthComponent::ChangeArmorValue(float ChangeValue)
 	{
 		(GetCurrentArmor() + ChangeValue) > MaxArmor ? CurrentArmor = MaxArmor : CurrentArmor += ChangeValue;
 	}
+
+	OnRep_ArmorChanged(); // For server
 }
 
 void UJadeHealthComponent::ChangeHealthValue(float ChangeValue)
@@ -78,6 +100,8 @@ void UJadeHealthComponent::ChangeHealthValue(float ChangeValue)
 		(GetCurrentHealth() + ChangeValue) > MaxHealth ? CurrentHealth = MaxHealth : CurrentHealth += ChangeValue;
 
 	}
+
+	OnRep_HealthChanged(); // For server
 
 }
 

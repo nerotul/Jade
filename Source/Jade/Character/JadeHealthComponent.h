@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "JadeHealthComponent.generated.h"
 
+class AJadeCharacter;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterDead);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -16,24 +18,6 @@ class JADE_API UJadeHealthComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UJadeHealthComponent();
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-	float MaxArmor = 100.0f;
-
-	UPROPERTY(Replicated)
-	float CurrentArmor = MaxArmor;
-
-	float MaxHealth = 100.0f;
-
-	UPROPERTY(Replicated)
-	float CurrentHealth = MaxHealth;
-
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentArmor() const { return CurrentArmor; };
@@ -53,5 +37,32 @@ public:
 
 	FOnCharacterDead OnCharacterDead;
 
-		
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
+
+	AJadeCharacter* ComponentOwner = nullptr;
+
+	float MaxArmor = 100.0f;
+
+	UPROPERTY(ReplicatedUsing = OnRep_ArmorChanged)
+	float CurrentArmor = MaxArmor;
+
+	float MaxHealth = 100.0f;
+
+	UPROPERTY(ReplicatedUsing = OnRep_HealthChanged)
+	float CurrentHealth = MaxHealth;
+
+	UFUNCTION()
+	void OnRep_ArmorChanged();
+
+	UFUNCTION()
+	void OnRep_HealthChanged();
+
+
+
+public:	
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 };

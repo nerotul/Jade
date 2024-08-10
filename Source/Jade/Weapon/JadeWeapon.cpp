@@ -95,7 +95,10 @@ void AJadeWeapon::FireWithProjectile()
 
 void AJadeWeapon::OnRep_MagazineAmmoChanged()
 {
-	OnMagazineAmmoChanged();
+	if (ThisWeaponsOwner)
+	{
+		ThisWeaponsOwner->OnMagazineAmmoChanged(CurrentMagazineAmmo);
+	}
 }
 
 void AJadeWeapon::ServerTryReloadWeapon_Implementation()
@@ -122,6 +125,7 @@ void AJadeWeapon::ServerTryReloadWeapon_Implementation()
 
 			}
 
+			OnRep_MagazineAmmoChanged();
 			MulticastReloadFX();
 
 		}

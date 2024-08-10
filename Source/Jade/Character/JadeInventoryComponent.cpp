@@ -3,6 +3,7 @@
 
 #include "Jade/Character/JadeInventoryComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Jade/Character/JadeCharacter.h"
 
 // Sets default values for this component's properties
 UJadeInventoryComponent::UJadeInventoryComponent()
@@ -17,7 +18,10 @@ UJadeInventoryComponent::UJadeInventoryComponent()
 
 void UJadeInventoryComponent::OnRep_OnInventoryRifleAmmoChanged()
 {
-	OnInventoryRifleAmmoChanged();
+	if (ComponentOwner)
+	{
+		ComponentOwner->OnInventoryRifleAmmoChanged(InventoryRifleAmmo);
+	}
 }
 
 int UJadeInventoryComponent::GetInventoryAmmo(EWeaponType InWeaponType) const
@@ -118,7 +122,7 @@ void UJadeInventoryComponent::UpdateStashedAmmo(EWeaponType InWeaponType, int In
 
 }
 
-int UJadeInventoryComponent::GetStashedAmmo(EWeaponType InWeaponType)
+int UJadeInventoryComponent::GetStashedAmmo(EWeaponType InWeaponType) const
 {
 	switch (InWeaponType)
 	{
@@ -140,14 +144,20 @@ void UJadeInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	ComponentOwner = Cast<AJadeCharacter>(GetOwner());
+
+	OnRep_OnInventoryRifleAmmoChanged();
+	OnRep_OnInventorySniperAmmoChanged();
+
 }
 
 
 void UJadeInventoryComponent::OnRep_OnInventorySniperAmmoChanged()
 {
-	OnInventorySniperAmmoChanged();
+	if (ComponentOwner)
+	{
+		ComponentOwner->OnInventorySniperAmmoChanged(InventorySniperAmmo);
+	}
 }
 
 // Called every frame
