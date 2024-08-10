@@ -15,7 +15,7 @@ UENUM(BlueprintType)
 enum class WeaponType : uint8
 {
 	AR UMETA(DisplayName = "AR"),
-	Shotgun   UMETA(DisplayName = "Shotgun"),
+	Sniper   UMETA(DisplayName = "Sniper"),
 };
 
 UCLASS()

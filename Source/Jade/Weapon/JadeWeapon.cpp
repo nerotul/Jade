@@ -107,13 +107,13 @@ void AJadeWeapon::ServerTryReloadWeapon_Implementation()
 			if (InventoryAmmo > MagazineEmptySpace)
 			{
 				CurrentMagazineAmmo += MagazineEmptySpace;
-				ThisWeaponsOwner->CharacterInventory->ChangeInventoryAmmo(WeaponType, -MagazineEmptySpace);
+				ThisWeaponsOwner->CharacterInventory->SubstractInventoryAmmo(WeaponType, MagazineEmptySpace);
 
 			}
 			else
 			{
 				CurrentMagazineAmmo += InventoryAmmo;
-				ThisWeaponsOwner->CharacterInventory->ChangeInventoryAmmo(WeaponType, -InventoryAmmo);
+				ThisWeaponsOwner->CharacterInventory->SubstractInventoryAmmo(WeaponType, InventoryAmmo);
 
 			}
 

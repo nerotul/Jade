@@ -24,11 +24,19 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnInventoryRifleAmmoChanged();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnInventorySniperAmmoChanged();
+
 	UFUNCTION()
 	int GetInventoryAmmo(WeaponType InWeaponType) const;
 
+	int GetMaxInventoryAmmo(WeaponType InWeaponType) const;
+
 	UFUNCTION()
-	void ChangeInventoryAmmo(WeaponType InWeaponType, int InAmmoChange);
+	void SubstractInventoryAmmo(WeaponType InWeaponType, int InAmountToSubstract);
+
+	UFUNCTION()
+	void AddInventoryAmmo(WeaponType InWeaponType, int InAmmoChange);
 
 
 protected:
@@ -42,6 +50,14 @@ protected:
 
 	UFUNCTION()
 	void OnRep_OnInventoryRifleAmmoChanged();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_OnInventorySniperAmmoChanged)
+	int InventorySniperAmmo = 5;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int MaxInventorySniperAmmo = 20;
+
+	UFUNCTION()
+	void OnRep_OnInventorySniperAmmoChanged();
 
 
 public:	

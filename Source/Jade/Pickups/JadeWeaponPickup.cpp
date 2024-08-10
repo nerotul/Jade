@@ -2,4 +2,37 @@
 
 
 #include "JadeWeaponPickup.h"
+#include "Jade/Weapon/JadeWeapon.h"
+#include "Jade/Character/JadeCharacter.h"
+#include "Jade/Character/JadeInventoryComponent.h"
 
+
+AJadeWeaponPickup::AJadeWeaponPickup()
+{
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeletalMesh"));
+	WeaponMesh->SetupAttachment(RootComponent);
+
+}
+
+void AJadeWeaponPickup::Interact(AActor* Interactor)
+{
+	if (Interactor)
+	{
+		AJadeCharacter* OverlappedCharacter = Cast<AJadeCharacter>(Interactor);
+
+		if (OverlappedCharacter)
+		{
+			if (OverlappedCharacter->CharacterInventory->InventoryWeapons.Find(WeaponClass) == INDEX_NONE)
+			{
+				OverlappedCharacter->CharacterInventory->InventoryWeapons.Add(WeaponClass);
+				Destroy();
+			}
+		}
+	}
+
+}
+
+void AJadeWeaponPickup::SetMagazineAmmo(int InMagazineAmmo)
+{
+	MagazineAmmo = InMagazineAmmo;
+}

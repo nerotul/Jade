@@ -9,6 +9,7 @@
 #include "Jade/Weapon/JadeWeapon.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
+#include "Jade/Pickups/PickupInterface.h"
 
 
 // Sets default values
@@ -18,6 +19,7 @@ AJadeCharacter::AJadeCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AJadeCharacter::OnBeginOverlap);
 
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
@@ -91,6 +93,15 @@ void AJadeCharacter::BeginPlay()
 	if (HasAuthority())
 	{
 		SpawnFirstPersonWeapon();
+	}
+}
+
+void AJadeCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	IPickupInterface* Interface = Cast<IPickupInterface>(OtherActor);
+	if (Interface)
+	{
+		Interface->Interact(this);
 	}
 }
 

@@ -31,6 +31,8 @@ public:
 
 	UCameraComponent* GetFirstPersonCameraComponent() { return FirstPersonCameraComponent; };
 
+
+
 	// Weapon and damage
 	void PlayFirstPersonFireAnimation();
 
@@ -59,6 +61,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
+
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	// Controls and movement
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)

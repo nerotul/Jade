@@ -27,24 +27,79 @@ int UJadeInventoryComponent::GetInventoryAmmo(WeaponType InWeaponType) const
 	case WeaponType::AR:
 		return InventoryRifleAmmo;
 		break;
+	case WeaponType::Sniper:
+		return InventorySniperAmmo;
+		break;
 	default:
 		return 0;
 		break;
 	}
 }
 
-void UJadeInventoryComponent::ChangeInventoryAmmo(WeaponType InWeaponType, int InAmmoChange)
+int UJadeInventoryComponent::GetMaxInventoryAmmo(WeaponType InWeaponType) const
 {
 	switch (InWeaponType)
 	{
 	case WeaponType::AR:
-		InventoryRifleAmmo += InAmmoChange;
+		return MaxInventoryRifleAmmo;
+		break;
+	case WeaponType::Sniper:
+		return MaxInventorySniperAmmo;
+		break;
+	default:
+		return 0;
+		break;
+	}
+
+}
+
+void UJadeInventoryComponent::SubstractInventoryAmmo(WeaponType InWeaponType, int InAmountToSubstract)
+{
+	switch (InWeaponType)
+	{
+	case WeaponType::AR:
+		InventoryRifleAmmo -= InAmountToSubstract;
+		OnRep_OnInventoryRifleAmmoChanged(); // For server
+		break;
+	case WeaponType::Sniper:
+		InventorySniperAmmo -= InAmountToSubstract;
+		OnRep_OnInventorySniperAmmoChanged(); // For server
 		break;
 	default:
 		break;
 	}
 
-	OnRep_OnInventoryRifleAmmoChanged(); // For server
+}
+
+void UJadeInventoryComponent::AddInventoryAmmo(WeaponType InWeaponType, int InAmmoChange)
+{
+	switch (InWeaponType)
+	{
+	case WeaponType::AR:
+		if ((InventoryRifleAmmo + InAmmoChange) > MaxInventoryRifleAmmo)
+		{
+			InventoryRifleAmmo = MaxInventoryRifleAmmo;
+		}
+		else
+		{
+			InventoryRifleAmmo += InAmmoChange;
+		}
+		OnRep_OnInventoryRifleAmmoChanged(); // For server
+		break;
+	case WeaponType::Sniper:
+		if ((InventorySniperAmmo + InAmmoChange) > MaxInventorySniperAmmo)
+		{
+			InventorySniperAmmo = MaxInventorySniperAmmo;
+		}
+		else
+		{
+			InventorySniperAmmo += InAmmoChange;
+		}
+		OnRep_OnInventorySniperAmmoChanged(); // For server
+		break;
+	default:
+		break;
+	}
 }
 
 // Called when the game starts
@@ -56,6 +111,11 @@ void UJadeInventoryComponent::BeginPlay()
 	
 }
 
+
+void UJadeInventoryComponent::OnRep_OnInventorySniperAmmoChanged()
+{
+	OnInventorySniperAmmoChanged();
+}
 
 // Called every frame
 void UJadeInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -71,6 +131,8 @@ void UJadeInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 
 	DOREPLIFETIME(UJadeInventoryComponent, InventoryWeapons);
 	DOREPLIFETIME(UJadeInventoryComponent, InventoryRifleAmmo);
+	DOREPLIFETIME(UJadeInventoryComponent, InventorySniperAmmo);
+
 
 
 }
