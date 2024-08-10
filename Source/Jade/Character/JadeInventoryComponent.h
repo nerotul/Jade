@@ -38,6 +38,12 @@ public:
 	UFUNCTION()
 	void AddInventoryAmmo(EWeaponType InWeaponType, int InAmmoChange);
 
+	UFUNCTION()
+	void UpdateStashedAmmo(EWeaponType InWeaponType, int InNewStashedAmmo);
+
+	UFUNCTION()
+	int GetStashedAmmo(EWeaponType InWeaponType);
+
 
 protected:
 	// Called when the game starts
@@ -47,7 +53,8 @@ protected:
 	int InventoryRifleAmmo = 30;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int MaxInventoryRifleAmmo = 90;
-
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	int StashedRifleAmmo = 30;
 	UFUNCTION()
 	void OnRep_OnInventoryRifleAmmoChanged();
 
@@ -55,7 +62,8 @@ protected:
 	int InventorySniperAmmo = 5;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int MaxInventorySniperAmmo = 20;
-
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	int StashedSniperAmmo = 5;
 	UFUNCTION()
 	void OnRep_OnInventorySniperAmmoChanged();
 

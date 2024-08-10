@@ -158,6 +158,7 @@ void AJadeCharacter::SpawnFirstPersonWeapon()
 		FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, false);
 
 		CurrentWeapon = GetWorld()->SpawnActor<AJadeWeapon>(WeaponClass, ActorSpawnParams);
+		CurrentWeapon->SetCurrentMagazineAmmo(CharacterInventory->GetStashedAmmo(CurrentWeapon->GetWeaponType()));
 
 		if (CurrentWeapon)
 		{
@@ -202,6 +203,7 @@ void AJadeCharacter::ServerSwitchToNextWeapon_Implementation()
 	{
 		if (CharacterInventory->InventoryWeapons.IsValidIndex(CurrentWeaponInventoryIndex + 1))
 		{
+			CharacterInventory->UpdateStashedAmmo(CurrentWeapon->GetWeaponType(), CurrentWeapon->GetCurrentMagazineAmmo());
 			CurrentWeapon->Destroy();
 			CurrentWeaponInventoryIndex += 1;
 			SpawnFirstPersonWeapon();
@@ -209,6 +211,7 @@ void AJadeCharacter::ServerSwitchToNextWeapon_Implementation()
 		}
 		else
 		{
+			CharacterInventory->UpdateStashedAmmo(CurrentWeapon->GetWeaponType(), CurrentWeapon->GetCurrentMagazineAmmo());
 			CurrentWeapon->Destroy();
 			CurrentWeaponInventoryIndex = 0;
 			SpawnFirstPersonWeapon();
@@ -219,18 +222,24 @@ void AJadeCharacter::ServerSwitchToNextWeapon_Implementation()
 
 void AJadeCharacter::ServerSwitchToPreviousWeapon_Implementation()
 {
-	if (CharacterInventory->InventoryWeapons.IsValidIndex(CurrentWeaponInventoryIndex - 1))
+	if (CharacterInventory && !CurrentWeapon->GetIsReloading())
 	{
-		CurrentWeapon->Destroy();
-		CurrentWeaponInventoryIndex -= 1;
-		SpawnFirstPersonWeapon();
+		if (CharacterInventory->InventoryWeapons.IsValidIndex(CurrentWeaponInventoryIndex - 1))
+		{
+			CharacterInventory->UpdateStashedAmmo(CurrentWeapon->GetWeaponType(), CurrentWeapon->GetCurrentMagazineAmmo());
+			CurrentWeapon->Destroy();
+			CurrentWeaponInventoryIndex -= 1;
+			SpawnFirstPersonWeapon();
 
-	}
-	else
-	{
-		CurrentWeapon->Destroy();
-		CurrentWeaponInventoryIndex = (CharacterInventory->InventoryWeapons.Num() - 1);
-		SpawnFirstPersonWeapon();
+		}
+		else
+		{
+			CharacterInventory->UpdateStashedAmmo(CurrentWeapon->GetWeaponType(), CurrentWeapon->GetCurrentMagazineAmmo());
+			CurrentWeapon->Destroy();
+			CurrentWeaponInventoryIndex = (CharacterInventory->InventoryWeapons.Num() - 1);
+			SpawnFirstPersonWeapon();
+
+		}
 
 	}
 }

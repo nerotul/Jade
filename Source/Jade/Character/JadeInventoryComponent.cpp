@@ -102,6 +102,39 @@ void UJadeInventoryComponent::AddInventoryAmmo(EWeaponType InWeaponType, int InA
 	}
 }
 
+void UJadeInventoryComponent::UpdateStashedAmmo(EWeaponType InWeaponType, int InNewStashedAmmo)
+{
+	switch (InWeaponType)
+	{
+	case EWeaponType::AR:
+		StashedRifleAmmo = InNewStashedAmmo;
+		break;
+	case EWeaponType::Sniper:
+		StashedSniperAmmo = InNewStashedAmmo;
+		break;
+	default:
+		break;
+	}
+
+}
+
+int UJadeInventoryComponent::GetStashedAmmo(EWeaponType InWeaponType)
+{
+	switch (InWeaponType)
+	{
+	case EWeaponType::AR:
+		return StashedRifleAmmo;
+		break;
+	case EWeaponType::Sniper:
+		return StashedSniperAmmo;
+		break;
+	default:
+		return 0;
+		break;
+	}
+
+}
+
 // Called when the game starts
 void UJadeInventoryComponent::BeginPlay()
 {
@@ -132,7 +165,7 @@ void UJadeInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME(UJadeInventoryComponent, InventoryWeapons);
 	DOREPLIFETIME(UJadeInventoryComponent, InventoryRifleAmmo);
 	DOREPLIFETIME(UJadeInventoryComponent, InventorySniperAmmo);
-
-
+	DOREPLIFETIME(UJadeInventoryComponent, StashedRifleAmmo);
+	DOREPLIFETIME(UJadeInventoryComponent, StashedSniperAmmo);
 
 }

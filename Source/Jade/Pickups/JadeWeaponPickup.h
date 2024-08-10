@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "JadePickup.h"
+#include "Jade/Weapon/JadeWeapon.h"
 #include "JadeWeaponPickup.generated.h"
-
-class AJadeWeapon;
 
 /**
  * 
@@ -21,12 +20,15 @@ public:
 	
 	virtual void Interact(AActor* Interactor) override;
 
+	UFUNCTION(BlueprintCallable)
 	void SetMagazineAmmo(int InMagazineAmmo);
-
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AJadeWeapon> WeaponClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = WeaponType)
+	EWeaponType WeaponType = EWeaponType::AR;
 
 	UPROPERTY(EditDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* WeaponMesh = nullptr;

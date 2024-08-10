@@ -24,6 +24,11 @@ AJadeWeapon::AJadeWeapon()
 	RootComponent = WeaponMesh;
 }
 
+void AJadeWeapon::SetCurrentMagazineAmmo(int InAmmo)
+{
+	CurrentMagazineAmmo = InAmmo;
+}
+
 // Called when the game starts or when spawned
 void AJadeWeapon::BeginPlay()
 {

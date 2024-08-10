@@ -2,7 +2,6 @@
 
 
 #include "JadeWeaponPickup.h"
-#include "Jade/Weapon/JadeWeapon.h"
 #include "Jade/Character/JadeCharacter.h"
 #include "Jade/Character/JadeInventoryComponent.h"
 
@@ -25,6 +24,7 @@ void AJadeWeaponPickup::Interact(AActor* Interactor)
 			if (OverlappedCharacter->CharacterInventory->InventoryWeapons.Find(WeaponClass) == INDEX_NONE)
 			{
 				OverlappedCharacter->CharacterInventory->InventoryWeapons.Add(WeaponClass);
+				OverlappedCharacter->CharacterInventory->UpdateStashedAmmo(WeaponType, MagazineAmmo);
 				Destroy();
 			}
 		}
