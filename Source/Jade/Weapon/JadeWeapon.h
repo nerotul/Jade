@@ -12,7 +12,7 @@ class UParticleSystem;
 class AJadeProjectile;
 
 UENUM(BlueprintType)
-enum class WeaponType : uint8
+enum class EWeaponType : uint8
 {
 	AR UMETA(DisplayName = "AR"),
 	Sniper   UMETA(DisplayName = "Sniper"),
@@ -37,6 +37,11 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerTryReloadWeapon();
 
+	UFUNCTION(BlueprintCallable)
+	int GetCurrentMagazineAmmo() const { return CurrentMagazineAmmo; };
+
+	EWeaponType GetWeaponType() const { return WeaponType; };
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -45,7 +50,7 @@ protected:
 	USkeletalMeshComponent* WeaponMesh = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = WeaponType)
-	WeaponType WeaponType = WeaponType::AR;
+	EWeaponType WeaponType = EWeaponType::AR;
 
 	AJadeCharacter* ThisWeaponsOwner = nullptr;
 

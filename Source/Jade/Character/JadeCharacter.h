@@ -130,6 +130,12 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerReloadWeapon();
 
+	UFUNCTION(Server, Reliable)
+	void ServerTryDropWeapon();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDropWeapon(AJadeWeapon* WeaponDropped);
+
 
 public:	
 	// Called every frame

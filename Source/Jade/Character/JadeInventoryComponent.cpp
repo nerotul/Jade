@@ -20,14 +20,14 @@ void UJadeInventoryComponent::OnRep_OnInventoryRifleAmmoChanged()
 	OnInventoryRifleAmmoChanged();
 }
 
-int UJadeInventoryComponent::GetInventoryAmmo(WeaponType InWeaponType) const
+int UJadeInventoryComponent::GetInventoryAmmo(EWeaponType InWeaponType) const
 {
 	switch (InWeaponType)
 	{
-	case WeaponType::AR:
+	case EWeaponType::AR:
 		return InventoryRifleAmmo;
 		break;
-	case WeaponType::Sniper:
+	case EWeaponType::Sniper:
 		return InventorySniperAmmo;
 		break;
 	default:
@@ -36,14 +36,14 @@ int UJadeInventoryComponent::GetInventoryAmmo(WeaponType InWeaponType) const
 	}
 }
 
-int UJadeInventoryComponent::GetMaxInventoryAmmo(WeaponType InWeaponType) const
+int UJadeInventoryComponent::GetMaxInventoryAmmo(EWeaponType InWeaponType) const
 {
 	switch (InWeaponType)
 	{
-	case WeaponType::AR:
+	case EWeaponType::AR:
 		return MaxInventoryRifleAmmo;
 		break;
-	case WeaponType::Sniper:
+	case EWeaponType::Sniper:
 		return MaxInventorySniperAmmo;
 		break;
 	default:
@@ -53,15 +53,15 @@ int UJadeInventoryComponent::GetMaxInventoryAmmo(WeaponType InWeaponType) const
 
 }
 
-void UJadeInventoryComponent::SubstractInventoryAmmo(WeaponType InWeaponType, int InAmountToSubstract)
+void UJadeInventoryComponent::SubstractInventoryAmmo(EWeaponType InWeaponType, int InAmountToSubstract)
 {
 	switch (InWeaponType)
 	{
-	case WeaponType::AR:
+	case EWeaponType::AR:
 		InventoryRifleAmmo -= InAmountToSubstract;
 		OnRep_OnInventoryRifleAmmoChanged(); // For server
 		break;
-	case WeaponType::Sniper:
+	case EWeaponType::Sniper:
 		InventorySniperAmmo -= InAmountToSubstract;
 		OnRep_OnInventorySniperAmmoChanged(); // For server
 		break;
@@ -71,11 +71,11 @@ void UJadeInventoryComponent::SubstractInventoryAmmo(WeaponType InWeaponType, in
 
 }
 
-void UJadeInventoryComponent::AddInventoryAmmo(WeaponType InWeaponType, int InAmmoChange)
+void UJadeInventoryComponent::AddInventoryAmmo(EWeaponType InWeaponType, int InAmmoChange)
 {
 	switch (InWeaponType)
 	{
-	case WeaponType::AR:
+	case EWeaponType::AR:
 		if ((InventoryRifleAmmo + InAmmoChange) > MaxInventoryRifleAmmo)
 		{
 			InventoryRifleAmmo = MaxInventoryRifleAmmo;
@@ -86,7 +86,7 @@ void UJadeInventoryComponent::AddInventoryAmmo(WeaponType InWeaponType, int InAm
 		}
 		OnRep_OnInventoryRifleAmmoChanged(); // For server
 		break;
-	case WeaponType::Sniper:
+	case EWeaponType::Sniper:
 		if ((InventorySniperAmmo + InAmmoChange) > MaxInventorySniperAmmo)
 		{
 			InventorySniperAmmo = MaxInventorySniperAmmo;

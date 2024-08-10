@@ -20,7 +20,7 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	WeaponType AmmoType = WeaponType::AR;
+	EWeaponType AmmoType = EWeaponType::AR;
 
 	UPROPERTY(EditAnywhere)
 	int StoredAmmo = 30;

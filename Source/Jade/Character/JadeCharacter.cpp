@@ -240,6 +240,16 @@ void AJadeCharacter::ServerReloadWeapon_Implementation()
 	CurrentWeapon->ServerTryReloadWeapon();
 }
 
+void AJadeCharacter::ServerTryDropWeapon_Implementation()
+{
+	if (CharacterInventory->InventoryWeapons.Num() >= 2)
+	{
+		OnDropWeapon(CurrentWeapon); // Will spawn new weapon in blueprint
+		CharacterInventory->InventoryWeapons.Remove(CurrentWeapon->GetClass());
+		ServerSwitchToNextWeapon();
+	}
+}
+
 // Called every frame
 void AJadeCharacter::Tick(float DeltaTime)
 {
@@ -273,6 +283,8 @@ void AJadeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("SwitchToPreviousWeapon", IE_Pressed, this, &AJadeCharacter::ServerSwitchToPreviousWeapon);
 
 	PlayerInputComponent->BindAction("ReloadWeapon", IE_Pressed, this, &AJadeCharacter::ServerReloadWeapon);
+
+	PlayerInputComponent->BindAction("DropWeapon", IE_Pressed, this, &AJadeCharacter::ServerTryDropWeapon);
 
 }
 

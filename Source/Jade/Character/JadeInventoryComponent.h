@@ -28,15 +28,15 @@ public:
 	void OnInventorySniperAmmoChanged();
 
 	UFUNCTION()
-	int GetInventoryAmmo(WeaponType InWeaponType) const;
+	int GetInventoryAmmo(EWeaponType InWeaponType) const;
 
-	int GetMaxInventoryAmmo(WeaponType InWeaponType) const;
-
-	UFUNCTION()
-	void SubstractInventoryAmmo(WeaponType InWeaponType, int InAmountToSubstract);
+	int GetMaxInventoryAmmo(EWeaponType InWeaponType) const;
 
 	UFUNCTION()
-	void AddInventoryAmmo(WeaponType InWeaponType, int InAmmoChange);
+	void SubstractInventoryAmmo(EWeaponType InWeaponType, int InAmountToSubstract);
+
+	UFUNCTION()
+	void AddInventoryAmmo(EWeaponType InWeaponType, int InAmmoChange);
 
 
 protected:
