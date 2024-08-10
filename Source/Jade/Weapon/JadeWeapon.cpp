@@ -8,6 +8,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Net/UnrealNetwork.h"
 #include "Jade/Character/JadeInventoryComponent.h"
+#include "Jade/Weapon/JadeProjectile.h"
 
 
 // Sets default values
@@ -63,6 +64,28 @@ void AJadeWeapon::FireWithTrace()
 
 void AJadeWeapon::FireWithProjectile()
 {
+	if (ProjectileClass)
+	{
+		UWorld* const World = GetWorld();
+		if (World)
+		{
+			const FRotator SpawnRotation = ThisWeaponsOwner->GetFirstPersonCameraComponent()->GetComponentRotation();
+			const USkeletalMeshSocket* Socket = WeaponMesh->GetSocketByName("MuzzleFlash");
+			const FVector SpawnLocation = Socket->GetSocketLocation(WeaponMesh);
+
+			FActorSpawnParameters ActorSpawnParams;
+			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+			AJadeProjectile* Projectile = World->SpawnActor<AJadeProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+
+			if (Projectile && ThisWeaponsOwner)
+			{
+				Projectile->SetProjectileDamage(WeaponDamage);
+				Projectile->SetInstigatorController(ThisWeaponsOwner->GetInstigatorController());
+			}
+		}
+
+	}
 }
 
 void AJadeWeapon::OnRep_MagazineAmmoChanged()
@@ -94,9 +117,10 @@ void AJadeWeapon::ServerTryReloadWeapon_Implementation()
 
 			}
 
+			MulticastReloadFX();
+
 		}
 
-		MulticastReloadFX();
 
 	}
 }
@@ -171,8 +195,9 @@ void AJadeWeapon::Fire()
 		MulticastOnFireFX();
 
 		CurrentMagazineAmmo -= 1;
+		OnRep_MagazineAmmoChanged(); // For server
 	}
-	else if (CurrentMagazineAmmo == 0 && !bIsReloading)
+	else if(CurrentMagazineAmmo == 0)
 	{
 		ServerTryReloadWeapon();
 	}

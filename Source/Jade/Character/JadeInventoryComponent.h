@@ -25,7 +25,7 @@ public:
 	void OnInventoryRifleAmmoChanged();
 
 	UFUNCTION()
-	int GetInventoryAmmo(WeaponType InWeaponType);
+	int GetInventoryAmmo(WeaponType InWeaponType) const;
 
 	UFUNCTION()
 	void ChangeInventoryAmmo(WeaponType InWeaponType, int InAmmoChange);

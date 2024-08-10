@@ -20,7 +20,7 @@ void UJadeInventoryComponent::OnRep_OnInventoryRifleAmmoChanged()
 	OnInventoryRifleAmmoChanged();
 }
 
-int UJadeInventoryComponent::GetInventoryAmmo(WeaponType InWeaponType)
+int UJadeInventoryComponent::GetInventoryAmmo(WeaponType InWeaponType) const
 {
 	switch (InWeaponType)
 	{
@@ -43,6 +43,8 @@ void UJadeInventoryComponent::ChangeInventoryAmmo(WeaponType InWeaponType, int I
 	default:
 		break;
 	}
+
+	OnRep_OnInventoryRifleAmmoChanged(); // For server
 }
 
 // Called when the game starts

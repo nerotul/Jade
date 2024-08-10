@@ -9,12 +9,13 @@
 class AJadeCharacter;
 class USoundBase;
 class UParticleSystem;
+class AJadeProjectile;
 
 UENUM(BlueprintType)
 enum class WeaponType : uint8
 {
 	AR UMETA(DisplayName = "AR"),
-	Sniper   UMETA(DisplayName = "Sniper"),
+	Shotgun   UMETA(DisplayName = "Shotgun"),
 };
 
 UCLASS()
@@ -70,7 +71,11 @@ protected:
 
 	bool bIsReloading = false;
 
+	UPROPERTY(EditDefaultsOnly)
 	bool bIsUsingProjectiles = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = Mesh)
+	TSubclassOf<AJadeProjectile> ProjectileClass;
 
 	void FireWithTrace();
 
