@@ -18,7 +18,7 @@ UJadeInventoryComponent::UJadeInventoryComponent()
 
 void UJadeInventoryComponent::OnRep_OnInventoryRifleAmmoChanged()
 {
-	if (ComponentOwner)
+	if (IsValid(ComponentOwner))
 	{
 		ComponentOwner->OnInventoryRifleAmmoChanged(InventoryRifleAmmo);
 	}
@@ -146,15 +146,12 @@ void UJadeInventoryComponent::BeginPlay()
 
 	ComponentOwner = Cast<AJadeCharacter>(GetOwner());
 
-	OnRep_OnInventoryRifleAmmoChanged();
-	OnRep_OnInventorySniperAmmoChanged();
-
 }
 
 
 void UJadeInventoryComponent::OnRep_OnInventorySniperAmmoChanged()
 {
-	if (ComponentOwner)
+	if (IsValid(ComponentOwner))
 	{
 		ComponentOwner->OnInventorySniperAmmoChanged(InventorySniperAmmo);
 	}

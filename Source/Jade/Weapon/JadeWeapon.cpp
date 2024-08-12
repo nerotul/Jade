@@ -95,7 +95,7 @@ void AJadeWeapon::FireWithProjectile()
 
 void AJadeWeapon::OnRep_MagazineAmmoChanged()
 {
-	if (ThisWeaponsOwner)
+	if (IsValid(ThisWeaponsOwner))
 	{
 		ThisWeaponsOwner->OnMagazineAmmoChanged(CurrentMagazineAmmo);
 	}

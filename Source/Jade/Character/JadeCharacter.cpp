@@ -46,7 +46,7 @@ AJadeCharacter::AJadeCharacter()
 void AJadeCharacter::PlayFirstPersonFireAnimation()
 {
 	UAnimInstance* AnimInstance = FirstPersonMesh->GetAnimInstance();
-	if (AnimInstance)
+	if (IsValid(AnimInstance))
 	{
 		AnimInstance->Montage_Play(FirstPersonFireAnimation, 1.f);
 	}
@@ -56,7 +56,7 @@ void AJadeCharacter::PlayFirstPersonFireAnimation()
 void AJadeCharacter::PlayThirdPersonFireAnimation()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance)
+	if (IsValid(AnimInstance))
 	{
 		AnimInstance->Montage_Play(ThirdPersonFireAnimation, 1.f);
 	}
@@ -67,7 +67,7 @@ void AJadeCharacter::PlayFirstPersonReloadAnimation()
 {
 	UAnimInstance* AnimInstance = FirstPersonMesh->GetAnimInstance();
 
-	if (AnimInstance != nullptr)
+	if (IsValid(AnimInstance))
 	{
 		AnimInstance->Montage_Play(FirstPersonReloadAnimation, 1.5f);
 	}
@@ -78,7 +78,7 @@ void AJadeCharacter::PlayThirdPersonReloadAnimation()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
-	if (AnimInstance != nullptr)
+	if (IsValid(AnimInstance))
 	{
 		AnimInstance->Montage_Play(ThirdPersonReloadAnimation, 1.5f);
 	}
@@ -160,7 +160,7 @@ void AJadeCharacter::SpawnFirstPersonWeapon()
 		CurrentWeapon = GetWorld()->SpawnActor<AJadeWeapon>(WeaponClass, ActorSpawnParams);
 		CurrentWeapon->SetCurrentMagazineAmmo(CharacterInventory->GetStashedAmmo(CurrentWeapon->GetWeaponType()));
 
-		if (CurrentWeapon)
+		if (IsValid(CurrentWeapon))
 		{
 			CurrentWeapon->AttachToComponent(FirstPersonMesh, Rule, FName("WeaponSocket"));
 			OnRep_SetThirdPersonWeaponMesh();
@@ -171,7 +171,7 @@ void AJadeCharacter::SpawnFirstPersonWeapon()
 
 void AJadeCharacter::OnRep_SetThirdPersonWeaponMesh()
 {
-	if (CurrentWeapon)
+	if (IsValid(CurrentWeapon))
 	{
 		ThirdPersonGun->SetSkeletalMesh(CurrentWeapon->GetWeaponMesh());
 		FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, false);
@@ -182,17 +182,23 @@ void AJadeCharacter::OnRep_SetThirdPersonWeaponMesh()
 
 void AJadeCharacter::ServerFireInputPressed_Implementation()
 {
-	bIsFireInputPressed = true;
+	if (bIsAlive)
+	{
+		bIsFireInputPressed = true;
+	}
 }
 
 void AJadeCharacter::ServerFireInputReleased_Implementation()
 {
-	bIsFireInputPressed = false;
+	if (bIsAlive)
+	{
+		bIsFireInputPressed = false;
+	}
 }
 
 void AJadeCharacter::TryToFireWeapon()
 {
-	if (CurrentWeapon)
+	if (IsValid(CurrentWeapon))
 	{
 		CurrentWeapon->Fire();
 	}
@@ -215,7 +221,7 @@ float AJadeCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 void AJadeCharacter::ServerSwitchToNextWeapon_Implementation()
 {
-	if (CharacterInventory && !CurrentWeapon->GetIsReloading())
+	if (bIsAlive && IsValid(CharacterInventory) && !CurrentWeapon->GetIsReloading())
 	{
 		if (CharacterInventory->InventoryWeapons.IsValidIndex(CurrentWeaponInventoryIndex + 1))
 		{
@@ -238,7 +244,7 @@ void AJadeCharacter::ServerSwitchToNextWeapon_Implementation()
 
 void AJadeCharacter::ServerSwitchToPreviousWeapon_Implementation()
 {
-	if (CharacterInventory && !CurrentWeapon->GetIsReloading())
+	if (bIsAlive && IsValid(CharacterInventory) && !CurrentWeapon->GetIsReloading())
 	{
 		if (CharacterInventory->InventoryWeapons.IsValidIndex(CurrentWeaponInventoryIndex - 1))
 		{
@@ -262,12 +268,15 @@ void AJadeCharacter::ServerSwitchToPreviousWeapon_Implementation()
 
 void AJadeCharacter::ServerReloadWeapon_Implementation()
 {
-	CurrentWeapon->ServerTryReloadWeapon();
+	if (bIsAlive && IsValid(CurrentWeapon))
+	{
+		CurrentWeapon->ServerTryReloadWeapon();
+	}
 }
 
 void AJadeCharacter::ServerTryDropWeapon_Implementation()
 {
-	if (!CurrentWeapon->GetIsReloading() && CharacterInventory->InventoryWeapons.Num() >= 2)
+	if (bIsAlive && !CurrentWeapon->GetIsReloading() && CharacterInventory->InventoryWeapons.Num() >= 2)
 	{
 		OnDropWeapon(CurrentWeapon); // Will spawn new weapon in blueprint
 		CharacterInventory->InventoryWeapons.Remove(CurrentWeapon->GetClass());

@@ -11,7 +11,7 @@ void AJadeAmmoPickup::Interact(AActor* Interactor)
 	{
 		AJadeCharacter* OverlappedCharacter = Cast<AJadeCharacter>(Interactor);
 
-		if (OverlappedCharacter)
+		if (IsValid(OverlappedCharacter))
 		{
 			int InventoryAmmo = OverlappedCharacter->CharacterInventory->GetInventoryAmmo(AmmoType);
 			int MaxInventoryAmmo = OverlappedCharacter->CharacterInventory->GetMaxInventoryAmmo(AmmoType);

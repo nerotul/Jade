@@ -28,7 +28,7 @@ void UJadeHealthComponent::BeginPlay()
 
 void UJadeHealthComponent::OnRep_ArmorChanged()
 {
-	if (ComponentOwner)
+	if (IsValid(ComponentOwner))
 	{
 		ComponentOwner->OnArmorChanged(CurrentArmor);
 	}
@@ -36,7 +36,7 @@ void UJadeHealthComponent::OnRep_ArmorChanged()
 
 void UJadeHealthComponent::OnRep_HealthChanged()
 {
-	if (ComponentOwner)
+	if (IsValid(ComponentOwner))
 	{
 		ComponentOwner->OnHealthChanged(CurrentHealth);
 	}

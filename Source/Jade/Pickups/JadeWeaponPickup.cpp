@@ -19,7 +19,7 @@ void AJadeWeaponPickup::Interact(AActor* Interactor)
 	{
 		AJadeCharacter* OverlappedCharacter = Cast<AJadeCharacter>(Interactor);
 
-		if (OverlappedCharacter)
+		if (IsValid(OverlappedCharacter))
 		{
 			if (OverlappedCharacter->CharacterInventory->InventoryWeapons.Find(WeaponClass) == INDEX_NONE)
 			{

@@ -56,7 +56,7 @@ void AJadeProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 {
 	if (OtherActor && OtherActor != this && OtherComp)
 	{
-		if (HasAuthority())
+		if (HasAuthority() && IsValid(OtherActor))
 		{
 			if (OtherActor->GetInstigatorController() != InstigatorController)
 			{
