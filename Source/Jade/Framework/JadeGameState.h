@@ -13,5 +13,13 @@ UCLASS()
 class JADE_API AJadeGameState : public AGameState
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadOnly)
+	int RedTeamScore = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	int BlueTeamScore = 0;
+
 	
 };
