@@ -32,7 +32,6 @@ public:
 	UCameraComponent* GetFirstPersonCameraComponent() { return FirstPersonCameraComponent; };
 
 
-
 	// Weapon and damage
 	void PlayFirstPersonFireAnimation();
 
@@ -159,7 +158,25 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDropWeapon(AJadeWeapon* WeaponDropped);
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CharacterIsDead)
 	bool bIsAlive = true;
+
+	UFUNCTION()
+	void KillCharacter(); // Runs on server
+
+	UFUNCTION()
+	void OnRep_CharacterIsDead();
+
+	FTimerHandle DestroyActorHandle;
+
+	UPROPERTY(EditDefaultsOnly)
+	float BodyDisappearanceDelay = 13.f;
+
+	void DestroyPawn();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnCharacterDead();
+
 
 
 public:	

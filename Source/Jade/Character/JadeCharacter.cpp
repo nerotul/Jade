@@ -41,6 +41,9 @@ AJadeCharacter::AJadeCharacter()
 
 	CharacterHealth = CreateDefaultSubobject<UJadeHealthComponent>(TEXT("CharacterHealthComponent"));
 	CharacterInventory = CreateDefaultSubobject<UJadeInventoryComponent>(TEXT("CharacterInventoryComponent"));
+
+	CharacterHealth->OnCharacterDead.AddUniqueDynamic(this, &AJadeCharacter::KillCharacter);
+
 }
 
 void AJadeCharacter::PlayFirstPersonFireAnimation()
@@ -94,6 +97,7 @@ void AJadeCharacter::BeginPlay()
 	{
 		SpawnFirstPersonWeapon();
 	}
+
 }
 
 void AJadeCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -284,6 +288,35 @@ void AJadeCharacter::ServerTryDropWeapon_Implementation()
 	}
 }
 
+void AJadeCharacter::KillCharacter()
+{
+	if (HasAuthority())
+	{
+		bIsAlive = false;
+		OnRep_CharacterIsDead(); // For server
+	}
+}
+
+void AJadeCharacter::OnRep_CharacterIsDead()
+{
+	USkeletalMeshComponent* ThirdPersonMesh = ACharacter::GetMesh();
+
+	RootComponent = FirstPersonCameraComponent;
+	GetCapsuleComponent()->DestroyComponent();
+	ThirdPersonMesh->SetSimulatePhysics(true);
+	ThirdPersonMesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	CurrentWeapon->Destroy();
+	FirstPersonMesh->DestroyComponent();
+	GetWorldTimerManager().SetTimer(DestroyActorHandle, this, &AJadeCharacter::DestroyPawn, BodyDisappearanceDelay, false);
+	OnCharacterDead();
+
+}
+
+void AJadeCharacter::DestroyPawn()
+{
+	Destroy();
+}
+
 // Called every frame
 void AJadeCharacter::Tick(float DeltaTime)
 {
@@ -328,5 +361,6 @@ void AJadeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	DOREPLIFETIME(AJadeCharacter, CharacterCameraRotation);
 	DOREPLIFETIME(AJadeCharacter, CurrentWeapon);
+	DOREPLIFETIME(AJadeCharacter, bIsAlive);
 
 }

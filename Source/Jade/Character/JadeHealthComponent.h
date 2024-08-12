@@ -35,6 +35,7 @@ public:
 
 	void ChangeHealthValue(float ChangeValue);
 
+	UPROPERTY()
 	FOnCharacterDead OnCharacterDead;
 
 protected:
