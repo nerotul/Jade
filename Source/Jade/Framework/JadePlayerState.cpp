@@ -3,3 +3,12 @@
 
 #include "Jade/Framework/JadePlayerState.h"
 
+void AJadePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AJadePlayerState, PlayerTeam);
+	DOREPLIFETIME(AJadePlayerState, PlayerScore);
+
+
+}

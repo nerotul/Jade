@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
+#include "Net/UnrealNetwork.h"
 #include "JadePlayerState.generated.h"
 
 UENUM(BlueprintType)
@@ -21,11 +22,12 @@ class JADE_API AJadePlayerState : public APlayerState
 {
 	GENERATED_BODY()
 
+
 public:
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Replicated)
 	EPlayerTeam PlayerTeam;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	int PlayerScore = 0;
 	
 };
