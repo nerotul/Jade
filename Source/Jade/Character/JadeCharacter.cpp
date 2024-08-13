@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Jade/Pickups/PickupInterface.h"
 #include "Jade/Weapon/TeamInterface.h"
+#include "Jade/Framework/JadeGameMode.h"
 
 
 // Sets default values
@@ -326,6 +327,7 @@ void AJadeCharacter::KillCharacter()
 	{
 		bIsAlive = false;
 		OnRep_CharacterIsDead(); // For server
+		GetWorld()->GetTimerManager().SetTimer(RespawnDelayHandle, this, &AJadeCharacter::RespawnCharacter, RespawnDelay, false);
 	}
 }
 
@@ -361,6 +363,15 @@ void AJadeCharacter::ServerToggleBurningProjectiles_Implementation()
 		{
 			CurrentWeapon->SetBurningProjectiles(true);
 		}
+	}
+}
+
+void AJadeCharacter::RespawnCharacter()
+{
+	AGameModeBase* GM = GetWorld()->GetAuthGameMode();
+	if (AJadeGameMode* GameMode = Cast<AJadeGameMode>(GM))
+	{
+		GameMode->RespawnCharacter(GetController(), GetCharacterTeam());
 	}
 }
 

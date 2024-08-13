@@ -13,5 +13,9 @@ UCLASS()
 class JADE_API AJadeGameMode : public AGameMode
 {
 	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void RespawnCharacter(AController* InController, EPlayerTeam InCharacterTeam);
 	
 };

@@ -188,6 +188,13 @@ protected:
 
 	AJadePlayerState* CharacterPlayerState;
 
+	void RespawnCharacter(); // Runs on server
+
+	FTimerHandle RespawnDelayHandle;
+
+	UPROPERTY(EditDefaultsOnly)
+	float RespawnDelay = 3.f;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
