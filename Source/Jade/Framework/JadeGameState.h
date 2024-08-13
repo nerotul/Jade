@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameState.h"
+#include "Jade/Framework/JadePlayerState.h"
+#include "Net/UnrealNetwork.h"
 #include "JadeGameState.generated.h"
 
 /**
@@ -15,11 +17,11 @@ class JADE_API AJadeGameState : public AGameState
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	int RedTeamScore = 0;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	int BlueTeamScore = 0;
 
-	
+	void IncrementTeamScore(EPlayerTeam InTeamToIncrement);
 };

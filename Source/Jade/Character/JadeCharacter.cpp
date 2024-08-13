@@ -12,7 +12,7 @@
 #include "Jade/Pickups/PickupInterface.h"
 #include "Jade/Weapon/TeamInterface.h"
 #include "Jade/Framework/JadeGameMode.h"
-
+#include "Jade/Framework/JadeGameState.h"
 
 // Sets default values
 AJadeCharacter::AJadeCharacter()
@@ -328,6 +328,23 @@ void AJadeCharacter::KillCharacter()
 		bIsAlive = false;
 		OnRep_CharacterIsDead(); // For server
 		GetWorld()->GetTimerManager().SetTimer(RespawnDelayHandle, this, &AJadeCharacter::RespawnCharacter, RespawnDelay, false);
+
+		if (IsValid(LastDamageInstigator))
+		{
+			LastDamageInstigator->GetPlayerState<AJadePlayerState>()->IncrementPlayerScore();
+
+			ITeamInterface* TeamInterface = Cast<ITeamInterface>(LastDamageInstigator);
+			if (TeamInterface)
+			{
+				AJadeGameState* GameState = GetWorld()->GetGameState<AJadeGameState>();
+
+				if (IsValid(GameState))
+				{
+					GameState->IncrementTeamScore(TeamInterface->GetInstigatorTeam());
+				}
+			}
+
+		}
 	}
 }
 

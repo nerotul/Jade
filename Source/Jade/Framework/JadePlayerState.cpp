@@ -12,3 +12,8 @@ void AJadePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 
 }
+
+void AJadePlayerState::IncrementPlayerScore()
+{
+	PlayerScore++;
+}

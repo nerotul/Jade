@@ -28,7 +28,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, Replicated)
 	EPlayerTeam PlayerTeam;
 
+	void IncrementPlayerScore();
+
+	UFUNCTION(BlueprintCallable)
+	int GetPlayerScore() const { return PlayerScore; };
+
+protected:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	int PlayerScore = 0;
-	
+
 };
