@@ -3,6 +3,12 @@
 
 #include "Jade/Framework/JadePlayerState.h"
 
+
+void AJadePlayerState::IncrementPlayerScore()
+{
+	PlayerScore++;
+}
+
 void AJadePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -11,9 +17,4 @@ void AJadePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AJadePlayerState, PlayerScore);
 
 
-}
-
-void AJadePlayerState::IncrementPlayerScore()
-{
-	PlayerScore++;
 }
