@@ -9,6 +9,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Jade/Character/JadeInventoryComponent.h"
 #include "Jade/Weapon/JadeProjectile.h"
+#include "Jade/Weapon/BurnEffect.h"
 
 
 // Sets default values
@@ -27,6 +28,12 @@ AJadeWeapon::AJadeWeapon()
 void AJadeWeapon::SetCurrentMagazineAmmo(int InAmmo)
 {
 	CurrentMagazineAmmo = InAmmo;
+}
+
+void AJadeWeapon::SetBurningProjectiles(bool InIsUsingBurningProjectiles)
+{
+	bIsUsingBurningProjectiles = InIsUsingBurningProjectiles;
+	OnRep_UsingBurningProjectiles();
 }
 
 // Called when the game starts or when spawned
@@ -65,6 +72,10 @@ void AJadeWeapon::FireWithTrace()
 
 	UGameplayStatics::ApplyDamage(Hit.GetActor(), WeaponDamage, ThisWeaponsOwner->GetInstigatorController(), ThisWeaponsOwner, NULL);
 
+	if (bIsUsingBurningProjectiles)
+	{
+		CreateAndApplyBurnEffect(Hit.GetActor(), ThisWeaponsOwner->GetInstigatorController());
+	}
 }
 
 void AJadeWeapon::FireWithProjectile()
@@ -87,6 +98,11 @@ void AJadeWeapon::FireWithProjectile()
 			{
 				Projectile->SetProjectileDamage(WeaponDamage);
 				Projectile->SetInstigatorController(ThisWeaponsOwner->GetInstigatorController());
+
+				if (bIsUsingBurningProjectiles)
+				{
+					Projectile->SetIsBurning(true);
+				}
 			}
 		}
 
@@ -179,6 +195,21 @@ void AJadeWeapon::ServerEndReloading_Implementation()
 	bIsReloading = false;
 }
 
+void AJadeWeapon::OnRep_UsingBurningProjectiles()
+{
+	if (ThisWeaponsOwner)
+	{
+		ThisWeaponsOwner->OnUsingBurningAmmoChanged(bIsUsingBurningProjectiles);
+	}
+}
+
+void AJadeWeapon::CreateAndApplyBurnEffect(AActor* InTargetActor, AController* InInstigatorController)
+{
+	UBurnEffect* BurnEffect = NewObject<UBurnEffect>();
+	BurnEffect->StartBurning(InTargetActor, InInstigatorController, GetWorld());
+
+}
+
 // Called every frame
 void AJadeWeapon::Tick(float DeltaTime)
 {
@@ -217,5 +248,6 @@ void AJadeWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AJadeWeapon, CurrentMagazineAmmo);
+	DOREPLIFETIME(AJadeWeapon, bIsUsingBurningProjectiles);
 
 }

@@ -29,6 +29,8 @@ public:
 
 	void SetProjectileDamage(float InDamage);
 
+	void SetIsBurning(bool InIsBurning);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -47,6 +49,8 @@ protected:
 
 	UPROPERTY()
 	AController* InstigatorController = nullptr;
+
+	bool bIsBurning = false;
 
 public:	
 	// Called every frame

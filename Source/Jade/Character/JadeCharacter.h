@@ -67,6 +67,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnInventorySniperAmmoChanged(float NewAmount);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnUsingBurningAmmoChanged(bool NewState);
 
 protected:
 	// Called when the game starts or when spawned
@@ -176,6 +178,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnCharacterDead();
+
+	UFUNCTION(Server, Reliable)
+	void ServerToggleBurningProjectiles();
 
 
 

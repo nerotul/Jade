@@ -317,6 +317,21 @@ void AJadeCharacter::DestroyPawn()
 	Destroy();
 }
 
+void AJadeCharacter::ServerToggleBurningProjectiles_Implementation()
+{
+	if (IsValid(CurrentWeapon))
+	{
+		if (CurrentWeapon->GetIsUsingBurningProjectiles())
+		{
+			CurrentWeapon->SetBurningProjectiles(false);
+		}
+		else
+		{
+			CurrentWeapon->SetBurningProjectiles(true);
+		}
+	}
+}
+
 // Called every frame
 void AJadeCharacter::Tick(float DeltaTime)
 {
@@ -352,6 +367,8 @@ void AJadeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("ReloadWeapon", IE_Pressed, this, &AJadeCharacter::ServerReloadWeapon);
 
 	PlayerInputComponent->BindAction("DropWeapon", IE_Pressed, this, &AJadeCharacter::ServerTryDropWeapon);
+
+	PlayerInputComponent->BindAction("ToggleBurningProjectiles", IE_Pressed, this, &AJadeCharacter::ServerToggleBurningProjectiles);
 
 }
 

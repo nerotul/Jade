@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Jade/Character/JadeCharacter.h"
+#include "Jade/Weapon/BurnEffect.h"
 
 // Sets default values
 AJadeProjectile::AJadeProjectile()
@@ -45,6 +46,11 @@ void AJadeProjectile::SetProjectileDamage(float InDamage)
 	ProjectileDamage = InDamage;
 }
 
+void AJadeProjectile::SetIsBurning(bool InIsBurning)
+{
+	bIsBurning = InIsBurning;
+}
+
 // Called when the game starts or when spawned
 void AJadeProjectile::BeginPlay()
 {
@@ -61,6 +67,12 @@ void AJadeProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 			if (OtherActor->GetInstigatorController() != InstigatorController)
 			{
 				UGameplayStatics::ApplyDamage(OtherActor, ProjectileDamage, InstigatorController, this, NULL);
+
+				if (bIsBurning)
+				{
+					UBurnEffect* BurnEffect = NewObject<UBurnEffect>();
+					BurnEffect->StartBurning(OtherActor, InstigatorController, GetWorld());
+				}
 			}
 		}
 

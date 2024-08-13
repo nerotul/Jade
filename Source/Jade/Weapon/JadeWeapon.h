@@ -44,6 +44,10 @@ public:
 
 	void SetCurrentMagazineAmmo(int InAmmo);
 
+	void SetBurningProjectiles(bool InIsUsingBurningProjectiles); // Runs on server
+
+	bool GetIsUsingBurningProjectiles() const { return bIsUsingBurningProjectiles; };
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -111,6 +115,14 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void ServerEndReloading();
+
+	UPROPERTY(ReplicatedUsing = OnRep_UsingBurningProjectiles)
+	bool bIsUsingBurningProjectiles = false;
+
+	UFUNCTION()
+	void OnRep_UsingBurningProjectiles();
+
+	void CreateAndApplyBurnEffect(AActor* InTargetActor, AController* InInstigatorController);
 
 
 public:	
