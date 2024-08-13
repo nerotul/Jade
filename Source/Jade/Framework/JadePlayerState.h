@@ -12,6 +12,7 @@ enum class EPlayerTeam : uint8
 {
 	Red	UMETA(DisplayName = "Red"),
 	Blue   UMETA(DisplayName = "Blue"),
+	NONE,
 };
 
 /**

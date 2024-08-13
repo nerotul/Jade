@@ -10,6 +10,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
 #include "Jade/Pickups/PickupInterface.h"
+#include "Jade/Weapon/TeamInterface.h"
 
 
 // Sets default values
@@ -86,6 +87,27 @@ void AJadeCharacter::PlayThirdPersonReloadAnimation()
 		AnimInstance->Montage_Play(ThirdPersonReloadAnimation, 1.5f);
 	}
 
+}
+
+EPlayerTeam AJadeCharacter::GetCharacterTeam()
+{
+	if (IsValid(CharacterPlayerState))
+	{
+		return CharacterPlayerState->PlayerTeam;
+	}
+	else
+	{
+		CharacterPlayerState = GetPlayerState<AJadePlayerState>();
+
+		if (IsValid(CharacterPlayerState))
+		{
+			return CharacterPlayerState->PlayerTeam;
+		}
+		else
+		{
+			return EPlayerTeam::NONE;
+		}
+	}
 }
 
 // Called when the game starts or when spawned
@@ -212,10 +234,20 @@ float AJadeCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 {
 	if (bIsAlive)
 	{
-		float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-		LastDamageInstigator = EventInstigator;
-		CharacterHealth->ChangeHealthValue(-DamageAmount);
-		return ActualDamage;
+		ITeamInterface* TeamInterface = Cast<ITeamInterface>(EventInstigator);
+		if (TeamInterface)
+		{
+			if (TeamInterface->GetInstigatorTeam() != GetCharacterTeam())
+			{
+				float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+				LastDamageInstigator = EventInstigator;
+				CharacterHealth->ChangeHealthValue(-DamageAmount);
+				return ActualDamage;
+			}
+		}
+
+		return 0;
+
 	}
 	else
 	{

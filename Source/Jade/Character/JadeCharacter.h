@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Jade/Framework/JadePlayerState.h"
 #include "JadeCharacter.generated.h"
 
 class UInputComponent;
@@ -69,6 +70,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUsingBurningAmmoChanged(bool NewState);
+
+	UFUNCTION()
+	EPlayerTeam GetCharacterTeam();
 
 protected:
 	// Called when the game starts or when spawned
@@ -182,7 +186,7 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerToggleBurningProjectiles();
 
-
+	AJadePlayerState* CharacterPlayerState;
 
 public:	
 	// Called every frame
