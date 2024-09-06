@@ -1,5 +1,5 @@
 # Jade
-The game is a multiplayer team-deathmatch FPS. 
+The game is a multiplayer team-deathmatch FPS.  
 Developed with Unreal Engine 5.4
 
 ## Main features
