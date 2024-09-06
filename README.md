@@ -9,4 +9,4 @@ Developed with Unreal Engine 5.4
 - The whole project was developed in under 30 hours
 
 ## How to play
-Clone this repository, generate programm files and compile the code!
+Clone this repository, generate program files and compile the code!
